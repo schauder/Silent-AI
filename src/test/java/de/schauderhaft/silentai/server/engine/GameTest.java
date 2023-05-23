@@ -3,6 +3,10 @@ package de.schauderhaft.silentai.server.engine;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -76,4 +80,33 @@ public class GameTest {
 		reset(one);
 	}
 
+	@Test
+	void gameGivesRandomHand(){
+
+		RecordingPlayer player = new RecordingPlayer();
+		Game game = new Game();
+		game.register(player);
+		game.start();
+		Hand hand = player.hands.get(0);
+
+		assertThat(hand.getCards())
+				.hasSize(5)
+				.doesNotContain(SpecialCard.DEPART);
+
+		List<Card> islandCards = hand.getCards().stream().filter(c -> c instanceof IslandCard).toList();
+		HashSet<Card> singleCards = new HashSet<>(islandCards);
+
+		assertThat(islandCards).containsExactlyInAnyOrder(singleCards.toArray(Card[]::new));
+
+	}
+
+	private static class RecordingPlayer implements Player {
+		List<Hand> hands = new ArrayList<>();
+
+		@Override
+		public Move makeMove(Hand hand) {
+			hands.add(hand);
+			return null;
+		}
+	}
 }

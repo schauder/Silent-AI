@@ -29,7 +29,8 @@ public class Game {
 
 
 	private void move() {
-		players.get(currentPlayer).makeMove(new Hand());
+
+		players.get(currentPlayer).makeMove(new Hand(new IslandCard(1), new IslandCard(2), new IslandCard(3), new IslandCard(4), new IslandCard(5)));
 		currentPlayer = (currentPlayer + 1) % getPlayerCount();
 	}
 
