@@ -1,11 +1,12 @@
 package de.schauderhaft.silentai.server.engine;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -81,21 +82,48 @@ public class GameTest {
 	}
 
 	@Test
-	void gameGivesRandomHand(){
+	void gameGivesRandomHand() {
 
-		Hand firstHand = checkSingleDeal();
+		Hand firstHand = checkSingleDeal(-1);
 		for (int i = 0; i < 100; i++) {
 
-			assertThat(firstHand).isNotEqualTo(checkSingleDeal());
+			assertThat(firstHand).isNotEqualTo(checkSingleDeal(i));
 		}
-
-
-
 	}
 
-	private static Hand checkSingleDeal() {
+	@Test
+	void gameGivesDifferentHandToDifferentPlayers() {
+
+		Game game = new Game(0);
+		RecordingPlayer players[] = new RecordingPlayer[5];
+		for (int i = 0; i < 5; i++) {
+			players[i] = new RecordingPlayer();
+			game.register(players[i]);
+		}
+
+		game.start();
+		for (int i = 1; i < 5; i++) {
+			game.next();
+		}
+
+		ArrayList<Card> allHands = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			allHands.addAll(players[i].hands.get(0).getCards());
+		}
+
+		assertThat(allHands).hasSize(25);
+
+		List<Card>islandCards = allHands.stream().filter(c -> c instanceof IslandCard).toList();
+		Set<Card> islandCardSet = new HashSet<>(islandCards);
+
+		assertThat(islandCards).hasSizeBetween(20, 25);
+		assertThat(islandCards).containsExactlyInAnyOrder(islandCardSet.toArray(Card[]::new));
+	}
+
+	private static Hand checkSingleDeal(long seed) {
+
 		RecordingPlayer player = new RecordingPlayer();
-		Game game = new Game();
+		Game game = new Game(seed);
 		game.register(player);
 		game.start();
 		Hand hand = player.hands.get(0);
