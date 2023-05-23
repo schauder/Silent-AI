@@ -1,11 +1,23 @@
 package de.schauderhaft.silentai.server.engine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class Deck {
 
+	private final Random random;
 	List<Card> cards = new ArrayList<>();
+
+	public Deck(Random random) {
+
+		this.random = random;
+	}
+
+	public Deck() {
+		this(new Random());
+	}
 
 	public List<Card> take(int count) {
 
@@ -23,5 +35,9 @@ public class Deck {
 
 	public void add(Card card) {
 		cards.add(card);
+	}
+
+	public void shuffle() {
+		Collections.shuffle(cards, random);
 	}
 }

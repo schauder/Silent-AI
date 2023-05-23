@@ -11,7 +11,7 @@ import java.util.Random;
 public class Game {
 
 	Random random;
-	private List<Card> allCards;
+	private Deck allCards;
 
 	Game() {
 		this(System.currentTimeMillis());
@@ -23,12 +23,13 @@ public class Game {
 	public Game(long seed) {
 
 		random = new Random(seed);
+		allCards = new Deck(random);
 
-		allCards = new ArrayList<>();
 		for (int i = 1; i <= 80; i++) {
 			allCards.add(new IslandCard(i));
 		}
-		Collections.shuffle(allCards, random);
+
+		allCards.shuffle( );
 
 	}
 
@@ -62,9 +63,7 @@ public class Game {
 
 	private List<Card> take5() {
 
-		List<Card> hand = new ArrayList<>(allCards.subList(0, 5));
-		allCards.removeAll(hand);
-		return hand;
+		return allCards.take(5);
 	}
 
 }
