@@ -3,6 +3,7 @@ package de.schauderhaft.silentai.server.engine;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -30,7 +31,18 @@ public class Game {
 
 	private void move() {
 
-		players.get(currentPlayer).makeMove(new Hand(new IslandCard(1), new IslandCard(2), new IslandCard(3), new IslandCard(4), new IslandCard(5)));
+		List<Card> allCards = new ArrayList<>();
+		for (int i = 1; i <= 80; i++) {
+			allCards.add(new IslandCard(i));
+		}
+		Collections.shuffle(allCards);
+
+		players.get(currentPlayer)
+				.makeMove(
+						new Hand(
+								allCards.subList(0, 5)
+						)
+				);
 		currentPlayer = (currentPlayer + 1) % getPlayerCount();
 	}
 

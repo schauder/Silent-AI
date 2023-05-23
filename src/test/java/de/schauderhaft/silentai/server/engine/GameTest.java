@@ -83,6 +83,17 @@ public class GameTest {
 	@Test
 	void gameGivesRandomHand(){
 
+		Hand firstHand = checkSingleDeal();
+		for (int i = 0; i < 100; i++) {
+
+			assertThat(firstHand).isNotEqualTo(checkSingleDeal());
+		}
+
+
+
+	}
+
+	private static Hand checkSingleDeal() {
 		RecordingPlayer player = new RecordingPlayer();
 		Game game = new Game();
 		game.register(player);
@@ -97,7 +108,7 @@ public class GameTest {
 		HashSet<Card> singleCards = new HashSet<>(islandCards);
 
 		assertThat(islandCards).containsExactlyInAnyOrder(singleCards.toArray(Card[]::new));
-
+		return hand;
 	}
 
 	private static class RecordingPlayer implements Player {
