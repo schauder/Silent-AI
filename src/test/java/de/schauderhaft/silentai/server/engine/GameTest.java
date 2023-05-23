@@ -119,7 +119,7 @@ class GameTest {
 
 			ArrayList<Card> allHands = new ArrayList<>();
 			for (int i = 0; i < 5; i++) {
-				allHands.addAll(players[i].hands.get(0).getCards());
+				allHands.addAll(players[i].hand.getCards());
 			}
 
 			assertThat(allHands).hasSize(25);
@@ -137,7 +137,7 @@ class GameTest {
 			Game game = new Game(seed);
 			game.register(player);
 			game.start();
-			Hand hand = player.hands.get(0);
+			Hand hand = player.hand;
 
 			assertThat(hand.getCards())
 					.hasSize(5)
@@ -151,15 +151,35 @@ class GameTest {
 		}
 
 		private static class RecordingPlayer implements Player {
-			List<Hand> hands = new ArrayList<>();
+			Hand hand;
 
 			@Override
 			public Move makeMove(Hand hand) {
-				hands.add(hand);
+				this.hand =hand;
 				return null;
 			}
 		}
 	}
 
+	@Nested
+	class ProcessingMove{
+		@Test
+		void moveAffectsSlots(){
+					Card[] card = new Card[1];
+			Player player = new Player() {
+				@Override
+				public Move makeMove(Hand hand) {
+					card[0] = hand.getCards().get(0);
+					return Move.islandCard((IslandCard) card[0], 15);
+				}
+			};
+
+			Game game = new Game();
+			game.register(player);
+			game.start();
+
+			assertThat(game.getSlot(15)).isEqualTo(card[0]);
+		}
+	}
 
 }
