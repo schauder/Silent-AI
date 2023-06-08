@@ -69,7 +69,11 @@ public class Game {
 	private void process(Move move) {
 
 		if (move instanceof IslandCardMove islandCardMove) {
-			slots[islandCardMove.slot()] = islandCardMove.card();
+			int slot = islandCardMove.slot();
+			if (slots[slot] != null){
+				throw new IllegalStateException("Slot " + slot + " is not free");
+			}
+			slots[slot] = islandCardMove.card();
 		}
 	}
 
