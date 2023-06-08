@@ -55,12 +55,18 @@ public class Game {
 
 	private void move() {
 
-		Move move = players.get(currentPlayer)
-				.makeMove(
-						new Hand(
-								take5()
-						)
-				);
+		Hand hand = new Hand(take5());
+		Move move = players
+				.get(currentPlayer)
+				.makeMove(hand);
+
+		if (move instanceof CardMove cm) {
+			Card card = cm.card();
+			if (!hand.getCards().contains(card)) {
+				throw new IllegalStateException("The card " + card + " is not part of your hand " + hand);
+			}
+		}
+
 
 		process(move);
 		currentPlayer = (currentPlayer + 1) % getPlayerCount();

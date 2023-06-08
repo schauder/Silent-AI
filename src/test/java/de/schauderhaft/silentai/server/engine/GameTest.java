@@ -193,6 +193,18 @@ class GameTest {
             assertThatThrownBy(game::next).isInstanceOf(IllegalStateException.class);
         }
 
+        @Test
+        void canOnlyPlayCardsFromHand() {
 
+            Player player = hand -> {
+                Card card = hand.getCards().get(0);
+                return Move.islandCard(new IslandCard(90), 15);
+            };
+
+            Game game = new Game();
+            game.register(player);
+
+            assertThatThrownBy(game::start).isInstanceOf(IllegalStateException.class);
+        }
     }
 }
